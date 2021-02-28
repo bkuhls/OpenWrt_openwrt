@@ -294,6 +294,20 @@ endef
 
 $(eval $(call KernelPackage,drm-amdgpu))
 
+define KernelPackage/drm-i915
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=i915 DRM support
+  DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-drm-kms-helper
+  KCONFIG:=CONFIG_DRM_I915=m
+  FILES:=$(LINUX_DIR)/drivers/gpu/drm/i915/i915.ko
+  AUTOLOAD:=$(call AutoProbe,i915)
+endef
+
+define KernelPackage/drm-i915/description
+  Direct Rendering Manager (DRM) support for i915 iGPU
+endef
+
+$(eval $(call KernelPackage,drm-i915))
 
 define KernelPackage/drm-imx
   SUBMENU:=$(VIDEO_MENU)
@@ -369,6 +383,27 @@ define KernelPackage/drm-imx-ldb/description
 endef
 
 $(eval $(call KernelPackage,drm-imx-ldb))
+
+define KernelPackage/drm-nouveau
+  SUBMENU:=$(VIDEO_MENU)
+  TITLE:=nouveau DRM support
+  DEPENDS:=@TARGET_x86 @DISPLAY_SUPPORT +kmod-drm-kms-helper
+  KCONFIG:=CONFIG_DRM_NOUVEAU \
+	NOUVEAU_DEBUG=5 \
+	NOUVEAU_DEBUG_DEFAULT=3 \
+	NOUVEAU_DEBUG_MMU=n \
+	DRM_NOUVEAU_BACKLIGHT=y
+  FILES:=\
+	$(LINUX_DIR)/drivers/gpu/drm/nouveau/nouveau.ko \
+	$(LINUX_DIR)/drivers/platform/x86/wmi.ko
+  AUTOLOAD:=$(call AutoProbe,nouveau)
+endef
+
+define KernelPackage/drm-nouveau/description
+  Direct Rendering Manager (DRM) support for NVIDIA Cards
+endef
+
+$(eval $(call KernelPackage,drm-nouveau))
 
 define KernelPackage/drm-radeon
   SUBMENU:=$(VIDEO_MENU)
